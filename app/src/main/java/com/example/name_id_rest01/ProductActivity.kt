@@ -1,6 +1,7 @@
 package com.example.name_id_rest01
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,7 +16,6 @@ import kotlinx.coroutines.launch
 class ProductActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProductBinding
-
     private lateinit var productAdapter: ProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +29,14 @@ class ProductActivity : AppCompatActivity() {
         setupRecyclerView()
 
         loadProducts()
+
+        binding.btnRetry.setOnClickListener {
+            loadProducts()
+        }
+
+        binding.btnTopRetry.setOnClickListener {
+            loadProducts()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -45,6 +53,9 @@ class ProductActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
 
+            binding.progressBar.visibility = View.VISIBLE
+            binding.errorContainer.visibility = View.GONE
+
             try {
 
                 val products = ApiClient.api.getProducts()
@@ -54,6 +65,12 @@ class ProductActivity : AppCompatActivity() {
             } catch (e: Exception) {
 
                 e.printStackTrace()
+
+                binding.errorContainer.visibility = View.VISIBLE
+
+            } finally {
+
+                binding.progressBar.visibility = View.GONE
             }
         }
     }
